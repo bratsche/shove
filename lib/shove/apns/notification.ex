@@ -14,7 +14,7 @@ defmodule Shove.APNS.Notification do
 
   @max_payload 2048
 
-  def payload(%Shove.APNS.Notification{} = notification) do
+  def payload(%Shove.APNS.Notification{alert: alert} = notification) do
     # Don't allow alerts, sounds, or badges with silent notifications or
     # Apple may throttle us.
     aps =
@@ -28,7 +28,16 @@ defmodule Shove.APNS.Notification do
         |> add_to_aps(:category, notification.category)
       end
 
-    Poison.encode!(%{aps: aps})
+    aps_json = Poison.encode!(%{aps: aps})
+
+    # If the payload is too big then re-generate it with a truncated alert
+    case byte_size(aps_json) - @max_payload do
+      n when n > 0 ->
+        Logger.warn("[APNS] Payload exceeded limit of #{@max_payload}, truncating alert by #{n} bytes.")
+        payload(%{notification | alert: String.slice(alert, 0, String.length(alert) - n)})
+      _ ->
+        aps_json
+    end
   end
 
   defp add_to_aps(aps, :'content-available' = key, value) do
