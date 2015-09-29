@@ -8,7 +8,7 @@ defmodule Shove do
 
     children = [
       # Define workers and child supervisors to be supervised
-      # worker(Shove.Worker, [arg1, arg2, arg3]),
+      worker(Shove.APNS.Counter, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
