@@ -62,8 +62,6 @@ defmodule Shove.APNS.Connection do
   def handle_call(:close_push, _from, %{push_socket: push_socket} = state) do
     :ssl.close(push_socket)
 
-    {:reply, :ok, state}
-
     {:reply, :ok, %{state | push_socket: nil}}
   end
 
@@ -73,6 +71,13 @@ defmodule Shove.APNS.Connection do
     :ssl.send(push_socket, bin)
 
     {:reply, :ok, state}
+  end
+
+  def terminate(reason, %{push_socket: nil}) do
+  end
+
+  def terminate(reason, %{push_socket: push_socket} = state) do
+    :ssl.close(push_socket)
   end
 
   defp ssl_options(config) do
