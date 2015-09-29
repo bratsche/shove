@@ -32,6 +32,14 @@ defmodule Shove.APNS.Connection do
     {:ok, pid}
   end
 
+  def handle_info({:ssl_closed, socket}, %{push_socket: socket} = state) do
+    Logger.info("[APNS] Lost push connection")
+    {:stop, :normal, state}
+  end
+
+  def handle_info({:ssl_closed, socket}, %{feedback_socket: socket} = state) do
+  end
+
   def handle_call(:connect_push, _from, %{config: config} = state) do
     host = to_char_list(config[:push_host])
     port = config[:push_port]
@@ -59,7 +67,15 @@ defmodule Shove.APNS.Connection do
     {:reply, :ok, %{state | push_socket: nil}}
   end
 
-  def ssl_options(config) do
+  def handle_call({:write, bin}, _from, %{push_socket: push_socket} = state) do
+    Logger.debug("[APNS] Writing data for #{inspect push_socket}")
+
+    :ssl.send(push_socket, bin)
+
+    {:reply, :ok, state}
+  end
+
+  defp ssl_options(config) do
     [certfile: config[:certfile], reuse_sessions: false, mode: :binary]
   end
 end
