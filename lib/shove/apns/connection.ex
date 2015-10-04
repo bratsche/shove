@@ -4,13 +4,13 @@ defmodule Shove.APNS.Connection do
 
   alias Shove.APNS.Notification
 
-  def start(options \\ []) do
+  def start(worker \\ nil) do
     config = Application.get_all_env(:shove)[:apns]
     state = %{
       config: config,
       push_socket: nil,
       feedback_socket: nil,
-      options: options
+      worker: worker
     }
 
     :ssl.start()
@@ -38,6 +38,11 @@ defmodule Shove.APNS.Connection do
   end
 
   def handle_info({:ssl_closed, socket}, %{feedback_socket: socket} = state) do
+  end
+
+  def handle_call(:stop, _from, state) do
+    Logger.info("[APNS] Stopping")
+    {:stop, :normal, state}
   end
 
   def handle_call(:connect_push, _from, %{config: config} = state) do
@@ -74,9 +79,11 @@ defmodule Shove.APNS.Connection do
   end
 
   def terminate(reason, %{push_socket: nil}) do
+    IO.puts "terminate! (nil)"
   end
 
   def terminate(reason, %{push_socket: push_socket} = state) do
+    Logger.info("[APNS] Closing socket")
     :ssl.close(push_socket)
   end
 
