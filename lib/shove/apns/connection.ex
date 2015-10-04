@@ -40,6 +40,13 @@ defmodule Shove.APNS.Connection do
   def handle_info({:ssl_closed, socket}, %{feedback_socket: socket} = state) do
   end
 
+  def handle_info({:ssl_error, socket, reason}, %{push_socket: socket} = state) do
+    Logger.error("[APNS] SSL error: #{reason}")
+    :ssl.close(socket)
+
+    {:stop, :error, state}
+  end
+
   def handle_call(:stop, _from, state) do
     Logger.info("[APNS] Stopping")
     {:stop, :normal, state}
@@ -78,13 +85,15 @@ defmodule Shove.APNS.Connection do
     {:reply, :ok, state}
   end
 
-  def terminate(reason, %{push_socket: nil}) do
-    IO.puts "terminate! (nil)"
+  def terminate(reason, %{push_socket: nil, worker: worker}) do
+    GenServer.cast(worker, :connection_closed)
   end
 
-  def terminate(reason, %{push_socket: push_socket} = state) do
+  def terminate(reason, %{push_socket: push_socket, worker: worker}) do
     Logger.info("[APNS] Closing socket")
     :ssl.close(push_socket)
+
+    GenServer.cast(worker, :connection_closed)
   end
 
   defp ssl_options(config) do

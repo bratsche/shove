@@ -1,5 +1,6 @@
 defmodule Shove.APNS.Worker do
   use GenServer
+  require Logger
 
   alias Shove.APNS.Notification
   alias Shove.APNS.Connection
@@ -39,6 +40,12 @@ defmodule Shove.APNS.Worker do
     send_notification_list(conn, notifications)
 
     {:reply, :ok, conn}
+  end
+
+  def handle_cast(:connection_closed, state) do
+    Logger.info("[APNS] Worker's connection closed")
+
+    {:noreply, nil}
   end
 
   defp send_notification(conn, %Notification{} = notification) when is_pid(conn) do
