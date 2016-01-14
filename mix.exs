@@ -21,4 +21,10 @@ defmodule Shove.Mixfile do
       {:poolboy, "~> 1.5.1"}
     ]
   end
+
+  defp description do
+    """
+    Push notifications for Elixir
+    """
+  end
 end
