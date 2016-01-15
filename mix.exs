@@ -27,4 +27,13 @@ defmodule Shove.Mixfile do
     Push notifications for Elixir
     """
   end
+
+  defp package do
+    [
+      maintainers: ["Cody Russell"],
+      licenses: ["MIT"],
+      links: %{"Github" => "https://github.com/bratsche/shove"},
+      files: ~w(mix.exs README.md lib config test LICENSE.md)
+    ]
+  end
 end
