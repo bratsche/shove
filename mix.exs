@@ -5,6 +5,7 @@ defmodule Shove.Mixfile do
     [app: :shove,
      version: "0.0.1",
      elixir: "~> 1.1",
+     description: description,
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      deps: deps]
@@ -32,7 +33,7 @@ defmodule Shove.Mixfile do
     [
       maintainers: ["Cody Russell"],
       licenses: ["MIT"],
-      links: %{"Github" => "https://github.com/bratsche/shove"},
+      links: %{github => "https://github.com/bratsche/shove"},
       files: ~w(mix.exs README.md lib config test LICENSE)
     ]
   end
