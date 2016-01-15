@@ -34,7 +34,7 @@ defmodule Shove.Mixfile do
     [
       maintainers: ["Cody Russell"],
       licenses: ["MIT"],
-      links: %{github => "https://github.com/bratsche/shove"},
+      links: %{github: "https://github.com/bratsche/shove"},
       files: ~w(mix.exs README.md lib config test LICENSE)
     ]
   end
