@@ -1,36 +1,36 @@
 defmodule Shove.Mixfile do
   use Mix.Project
 
-  def project do
+  def project() do
     [app: :shove,
      version: "0.0.1",
      elixir: "~> 1.1",
-     description: description,
-     package: package,
+     description: description(),
+     package: package(),
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     deps: deps]
+     deps: deps()]
   end
 
-  def application do
+  def application() do
     [applications: [:logger],
      mod: {Shove, []}]
   end
 
-  defp deps do
+  defp deps() do
     [
-      {:poison, "~> 1.5"},
+      {:jason, "~> 1.2"},
       {:poolboy, "~> 1.5.1"}
     ]
   end
 
-  defp description do
+  defp description() do
     """
     Push notifications for Elixir
     """
   end
 
-  defp package do
+  defp package() do
     [
       maintainers: ["Cody Russell"],
       licenses: ["MIT"],

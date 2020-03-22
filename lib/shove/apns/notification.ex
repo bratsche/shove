@@ -28,7 +28,7 @@ defmodule Shove.APNS.Notification do
         |> add_to_aps(:category, notification.category)
       end
 
-    aps_json = Poison.encode!(%{aps: aps})
+    aps_json = Jason.encode!(%{aps: aps})
 
     # If the payload is too big then re-generate it with a truncated alert
     case byte_size(aps_json) - @max_payload do
